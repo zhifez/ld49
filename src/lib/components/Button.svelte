@@ -1,0 +1,42 @@
+<script>
+    import { createEventDispatcher } from 'svelte';
+
+    export let label = '';
+    export let hint = '';
+    export let color = 'blue-500';
+    export let textColor = null;
+    export let textClass = 'text-md';
+    export let paddingClass = 'px-4 py-2';
+    export let outline = false;
+    export let block = false;
+    export let disabled = false;
+
+    const dispatch = createEventDispatcher();
+
+    const onClick = () => {
+        if (disabled) {
+            return;
+        }
+
+        dispatch('click');
+    }
+</script>
+
+<button 
+    class={`rounded-md shadow 
+    ${paddingClass}
+    ${outline ? 'border-2 border' : 'bg'}-${color}
+    text-${textColor ?? (outline ? color : 'white')}
+    ${disabled ? 
+        'opacity-50 cursor-default' : 
+        (outline ? `hover:bg-${color} hover:text-white` : `hover:opacity-75`)
+    }
+    ${block ? 'w-full' : ''}
+    `}
+    on:click={onClick}
+>
+    <span class="flex flex-col">
+        <span class={textClass}>{label}</span>
+        {#if hint}<span class="text-xs font-light">{hint}</span>{/if}
+    </span>
+</button>
