@@ -86,7 +86,7 @@
             </div>
 
             {#if !isRolling}
-            <p>{`You received ${realmTokenValue ?? '?'} Realm Token${realmTokenValue > 1 ? 's' : ''} and ${multiverseTokenValue ?? '?'} Multiverse Token${multiverseTokenValue > 1 ? 's' : ''}.`}</p>
+            <p>{`Received ${realmTokenValue ?? '?'} Realm Token${realmTokenValue > 1 ? 's' : ''} and ${multiverseTokenValue ?? '?'} Multiverse Token${multiverseTokenValue > 1 ? 's' : ''}.`}</p>
             {/if}
 
             <Button 

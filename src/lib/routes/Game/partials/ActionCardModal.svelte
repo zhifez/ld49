@@ -1,5 +1,5 @@
 <script>
-    import { setActiveActionCard, system } from '../../../stores/game.store';
+    import { game, setActiveActionCard, system } from '../../../stores/game.store';
     import { commonDetails, effects } from '../../../stores/gameData';
     import Modal from '../../../components/Modal.svelte';
     import Tooltip from '../../../components/Tooltip.svelte';
@@ -27,12 +27,15 @@
 >
     <div class="flex flex-col items-center gap-5">
         <div class="modal-wrapper bg-blue-500 rounded-md">
-            <div class="h-full flex flex-col items-center justify-between gap-2 p-5 text-white">
+            <div class="h-full flex flex-col items-center justify-between gap-2 p-4 text-white">
                 <div class="flex flex-col items-center gap-2">
-                    <div class="h-24">
+                    <div class="h-20">
                         <svelte:component this={actionData.icon} />
                     </div>
-                    <p class="text-lg font-semibold">{actionData.name}</p>
+                    <div class="flex flex-col text-center">
+                        <p class="text-lg font-semibold">{actionData.name}</p>
+                        <p class="text-xs">{actionData.hint}</p>
+                    </div>
                     <div class="flex items-center gap-3">
                         {#each actionData.conditions as cond}
                         <Tooltip
@@ -73,7 +76,7 @@
                             <div class="h-5">
                                 <svelte:component this={commonDetails[stat].icon} />
                             </div>
-                            <p>{actionData.battle[stat]}</p>
+                            <p>{actionData.battle[stat] > 0 ? actionData.battle[stat] : '-'}</p>
                         </div>
                         {/each}
                     </div>
@@ -82,11 +85,18 @@
             </div>
         </div>
 
+        {#if $game.phase === 2}
         <Button 
             color="white"
             textColor="black"
             label="Buy Action Card"
+            disabled={actionData.sold}
         />
+        {:else}
+        <p class="px-3 py-2 bg-white rounded-md text-xs">
+            Note: You can only buy this in Buy Phase.
+        </p>
+        {/if}
     </div>
 </Modal>
 

@@ -11,7 +11,7 @@ export const actions = [
         type: 'defense',
         name: 'Additional Defense',
         icon: GiEyeShield,
-        hint: 'Provide additional defense when during battle.',
+        hint: 'Provide additional defense during battle.',
         conditions: [
             { key: 'token-realm', quantity: 2 },
         ],

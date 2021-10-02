@@ -7,7 +7,7 @@ export const playerPhases = {
         btnLabel: 'Roll',
     },
     'resolve': {
-        label: 'Resolve Realm conflicts.',
+        label: 'Resolve Multiverse conflicts.',
         btnLabel: 'Pass',
     },
     'buy': {
