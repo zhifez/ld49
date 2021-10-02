@@ -118,12 +118,28 @@ export const setActivePlayerState = (key, value) => {
 export const system = writable({
     showDiceRoll: false,
     diceRollValue: 0,
+    showActionCard: false,
+    activeActionCard: null,
 });
 
 export const setShowDiceRoll = (show) => {
     system.update(state => {
         let nextState = {...state};
         nextState.showDiceRoll = show;
+        return nextState;
+    });
+}
+
+export const setActiveActionCard = (action) => {
+    system.update(state => {
+        let nextState = {...state};
+        if (action) {
+            nextState.showActionCard = true;
+            nextState.activeActionCard = action;
+        }
+        else {
+            nextState.showActionCard = false;
+        }
         return nextState;
     });
 }

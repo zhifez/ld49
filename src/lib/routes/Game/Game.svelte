@@ -2,12 +2,17 @@
     import { game, players, system } from '../../stores/game.store';
     import CardMarket from './partials/CardMarket.svelte';
     import DiceRollModal from './partials/DiceRollModal.svelte';
+    import ActionCardModal from './partials/ActionCardModal.svelte';
     import PlayersSidebar from './partials/PlayersSidebar.svelte';
     import RealmTiles from './partials/RealmTiles.svelte';
 </script>
 
 {#if $system.showDiceRoll}
 <DiceRollModal />
+{/if}
+
+{#if $system.showActionCard}
+<ActionCardModal />
 {/if}
 
 <div class="w-screen h-screen grid grid-cols-4 bg-gray-100">

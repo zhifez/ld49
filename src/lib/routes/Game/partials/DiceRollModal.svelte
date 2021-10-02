@@ -1,6 +1,6 @@
 <script>
     import { generateDiceRolls, nextPhase, setActivePlayerState, setShowDiceRoll } from '../../../stores/game.store';
-    import { commonIcons } from '../../../stores/gameData';
+    import { commonDetails } from '../../../stores/gameData';
     import Modal from '../../../components/Modal.svelte';
     import { onMount } from 'svelte';
     import GiDiceSixFacesOne from 'svelte-icons/gi/GiDiceSixFacesOne.svelte';
@@ -64,7 +64,7 @@
             <div class="grid grid-cols-2 gap-3">
                 <div class="col-span-1 flex flex-col items-center gap-2">
                     <div class="h-12">
-                        <svelte:component this={commonIcons['token-realm']} />
+                        <svelte:component this={commonDetails['token-realm'].icon} />
                     </div>
                     <div class="h-20">
                         <svelte:component this={diceIcons[
@@ -75,7 +75,7 @@
 
                 <div class="col-span-1 flex flex-col items-center gap-2">
                     <div class="h-12">
-                        <svelte:component this={commonIcons['token-multiverse']} />
+                        <svelte:component this={commonDetails['token-multiverse'].icon} />
                     </div>
                     <div class="h-20">
                         <svelte:component this={diceIcons[
