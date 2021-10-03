@@ -1,5 +1,5 @@
 <script>
-    import { generateDiceRolls, nextPhase, setActivePlayerState, setShowDiceRoll } from '../../../stores/game.store';
+    import { game, generateDiceRolls, getActivePlayer, nextPhase, players, setActivePlayerState, setShowDiceRoll } from '../../../stores/game.store';
     import { commonDetails } from '../../../stores/gameData';
     import Modal from '../../../components/Modal.svelte';
     import { onMount } from 'svelte';
@@ -10,6 +10,7 @@
     import GiDiceSixFacesFive from 'svelte-icons/gi/GiDiceSixFacesFive.svelte';
     import GiDiceSixFacesSix from 'svelte-icons/gi/GiDiceSixFacesSix.svelte';
     import Button from '../../../components/Button.svelte';
+import { get } from 'svelte/store';
 
     const diceRollsMax = 12;
 
@@ -28,13 +29,15 @@
     let realmDiceRolls = generateDiceRolls(diceRollsMax);
     let multiverseDiceRolls = generateDiceRolls(diceRollsMax);
     onMount(() => {
+        const activePlayer = getActivePlayer();
+
         // For realism purposes, add random dice value for display
         let getNextDice = setInterval(() => {
             if (diceRolls <= 0) {
                 realmTokenValue = Math.floor(Math.random() * 6) + 1;
                 multiverseTokenValue = Math.floor(Math.random() * 6) + 1;
-                setActivePlayerState('realmToken', realmTokenValue);
-                setActivePlayerState('multiverseToken', multiverseTokenValue);
+                setActivePlayerState('realmToken', realmTokenValue + activePlayer.realmToken);
+                setActivePlayerState('multiverseToken', multiverseTokenValue + activePlayer.multiverseToken);
                 clearInterval(getNextDice);
                 return;
             }

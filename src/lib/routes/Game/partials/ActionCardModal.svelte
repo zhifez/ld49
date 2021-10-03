@@ -1,5 +1,5 @@
 <script>
-    import { game, setActiveActionCard, system } from '../../../stores/game.store';
+    import { buyAction, game, playerCanBuyAction, setActiveActionCard, system } from '../../../stores/game.store';
     import { commonDetails, effects } from '../../../stores/gameData';
     import Modal from '../../../components/Modal.svelte';
     import Tooltip from '../../../components/Tooltip.svelte';
@@ -15,9 +15,14 @@
     }
 
     const onBuyAction = () => {
-        // TODO: Check can buy action
+        const error = playerCanBuyAction(actionData);
+        if (error) {
+            alert(error);
+            return;
+        }
 
-        // TODO: Buy action if it's possible
+        buyAction(actionData);
+        onCloseModal();
     }
 </script>
 
@@ -90,6 +95,7 @@
             color="white"
             textColor="black"
             label="Buy Action Card"
+            on:click={onBuyAction}
             disabled={actionData.sold}
         />
         {:else}

@@ -20,6 +20,7 @@ export const actions = [
             attack: 0,
             defense: 2,
         },
+        rarity: 5,
     },
     {
         type: 'monster',
@@ -39,8 +40,37 @@ export const actions = [
             attack: 5,
             defense: 5,
         },
+        rarity: 6,
     }
 ];
+
+export const getRandomMarketActions = (quantity) => {
+    let marketActions = [];
+
+    while (marketActions.length < quantity) {
+        const keys = Object.keys(actions);
+        let rand = Math.random();
+        let randKey = keys[Math.floor(rand * keys.length)];
+        let item = actions[randKey];
+
+        let rarityCondition = 0;
+        for (let r=0; r<12; ++r) {
+            rand = Math.random();
+            if (rand <= 0.4) {
+                ++rarityCondition;
+            }
+        }
+
+        if (rarityCondition >= item.rarity) {
+            marketActions.push({
+                ...item,
+                key: randKey,
+                sold: false,
+            });
+        }
+    }
+    return marketActions;
+}
 
 export const effects = {
     'tile-block': {

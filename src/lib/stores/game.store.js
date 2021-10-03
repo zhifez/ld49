@@ -1,4 +1,9 @@
 import { get, writable } from "svelte/store";
+import { getRandomMarketActions } from "./gameData";
+
+const ERROR_NOT_ENOUGH_RESOURCES_BUY_ACTION = 'Not enough resources to buy this action.';
+
+const marketActionCount = 6;
 
 // PLAYER
 export const playerPhases = {
@@ -35,16 +40,29 @@ const createPlayer = (name) => {
         realmToken: 0,
         multiverseToken: 0,
         hasTakenAction: false,
+        actions: [],
         conflicts: {},
     };
 }
 
+// PLAYER
 export const players = writable([]);
+
+export const setActivePlayerState = (key, value) => {
+    const gameState = get(game);
+    
+    players.update(players => {
+        let nextPlayers = [...players];
+        nextPlayers[gameState.turn][key] = value;
+        return nextPlayers;
+    });
+}
 
 // GAME
 const initGameState = {
     round: 0, turn: -1, 
     phase: 0, // 4 phases: Resolve Multiverse event, Buy Action Cards, Take Actions, Place Realm tile. 
+    marketActions: [],
 };
 export const game = writable(initGameState);
 
@@ -58,10 +76,19 @@ export const initGame = (playerCount) => {
     game.update(_ => {
         let nextState = {...initGameState};
         nextState.turn = 0;
+
+        nextState.marketActions = getRandomMarketActions(marketActionCount);
+
         return nextState;
     });
 }
 initGame(2);
+
+export const getActivePlayer = () => {
+    const gameState = get(game);
+    const playersState = get(players);
+    return playersState[gameState.turn];
+}
 
 export const nextPhase = () => {
     const playersState = get(players);
@@ -104,14 +131,83 @@ const playerHasConflicts = (player) => {
     return Object.keys(player.conflicts).length > 0;
 }
 
-export const setActivePlayerState = (key, value) => {
+export const playerCanBuyAction = (action) => {
     const gameState = get(game);
+    const playersState = get(players);
+    const activePlayer = playersState[gameState.turn];
+
+    if (action.conditions && action.conditions.length > 0) {
+        for (let a=0; a<action.conditions.length; ++a) {
+            let cond = action.conditions[a];
+            switch(cond.key) {
+            case 'token-realm':
+                if (activePlayer.realmToken < cond.quantity) {
+                    return ERROR_NOT_ENOUGH_RESOURCES_BUY_ACTION;
+                }
+                break;
+
+            case 'token-multiverse':
+                if (activePlayer.multiverseToken < cond.quantity) {
+                    return ERROR_NOT_ENOUGH_RESOURCES_BUY_ACTION;
+                }
+                break;
+            }
+        }
+        return null;
+    }
+    return null;
+}
+
+const fulfilConditions = (player, conditions) => {
+    if (conditions && conditions.length > 0) {
+        conditions.forEach(cond => {
+            switch(cond.key) {
+            case 'token-realm':
+                player.realmToken -= cond.quantity;
+                break;
+
+            case 'token-multiverse':
+                player.multiverseToken -= cond.quantity;
+                break;
+            }
+        });
+    }
+    return player;
+}
+
+export const buyAction = (action) => {
+    const gameState = get(game);
+
+    let newAction = {
+        ...action,
+        owner: gameState.turn,
+    };
     
-    players.update(state => {
-        let nextState = [...state];
-        nextState[gameState.turn][key] = value;
+    // Add card to player
+    players.update(players => {
+        let nextPlayers = [...players];
+        nextPlayers[gameState.turn] = fulfilConditions(
+            nextPlayers[gameState.turn],
+            newAction.conditions,
+        );
+        nextPlayers[gameState.turn].actions.push(newAction);
+        return nextPlayers;
+    });
+
+    // Remove card from market
+    game.update(state => {
+        let nextState = {...state};
+        nextState.marketActions[action.marketIndex] = null;
         return nextState;
     });
+
+    setTimeout(() => {
+        game.update(state => {
+            let nextState = {...state};
+            nextState.marketActions[action.marketIndex] = getRandomMarketActions(1)[0];
+            return nextState;
+        });
+    }, 2000);
 }
 
 // SYSTEM
